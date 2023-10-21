@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, matchRoutes } from 'react-route
 import './App.css';
 import LoginPage from './LoginPage';
 import Projects from './Projects';
+import CreateAccount from './CreateAccountPage';
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/createaccount" element={<CreateAccount />} />
         <Route exact path="/" element={<LoginPage />} />
       </Routes>
     </Router>
