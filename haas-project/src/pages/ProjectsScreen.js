@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Paper, Container, Grid, TextField, Button} from '@mui/material';
-import Hardware from './Hardware.js';
+import Hardware from '../components/Hardware.js';
 import './ProjectsScreen.css';
 
 export default function ProjectsScreen({children}){
