@@ -1,24 +1,19 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, matchRoutes } from 'react-router-dom';
 import './App.css';
-import {Paper, Container, Grid, TextField, Button} from '@mui/material';
-import ProjectsScreen from './pages/ProjectsScreen';
+import LoginPage from './LoginPage';
+import Projects from './Projects';
 
-function App() {
+const App = () => {
   return (
-    <Container maxWidth="md" className="top-left-container">
-    <Grid container spacing={3} style={{ padding: '5px'}}>
-      <Grid item xs={12}>
-        <ProjectsScreen>Project 1</ProjectsScreen>
-      </Grid>
-      <Grid item xs={12}>
-        <ProjectsScreen>Project 2</ProjectsScreen>
-      </Grid>
-      <Grid item xs={12}>
-        <ProjectsScreen>Project 3</ProjectsScreen>
-      </Grid>
-    </Grid>
-  </Container>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route exact path="/" element={<LoginPage />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
