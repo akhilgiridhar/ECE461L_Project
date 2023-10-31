@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import {Paper, Container, Grid, TextField, Button} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,22 @@ import { deepPurple, indigo } from '@mui/material/colors';
 
 export default function CreateAccount() {
     const navigate = useNavigate();
-    
+    const [name, setName] = useState("")
+    const [userid, setUserid] = useState("")
+    const [password, setPassword] = useState("")
+
+    const handleName = (e) => {
+      setName(e.target.value);
+    }
+
+    const handleUserid = (e) => {
+      setName(e.target.value);
+    }
+
+    const handlePassword = (e) => {
+      setName(e.target.value);
+    }
+
     const handleLogin = async () => {
         const isAuthenticated = true;
 
@@ -43,11 +58,23 @@ export default function CreateAccount() {
               margin="normal"
               required
               fullWidth
+              id="name"
+              label="Name"
+              name="name"
+              autoComplete="name"
+              autoFocus
+              onChange={handleName}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
               id="userid"
               label="User ID"
               name="userid"
               autoComplete="userid"
               autoFocus
+              onChange={handleUserid}
             />
             <TextField
               margin="normal"
@@ -58,6 +85,7 @@ export default function CreateAccount() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={handlePassword}
             />
             <Button
               type="submit"
