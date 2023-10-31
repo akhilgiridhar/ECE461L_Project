@@ -29,7 +29,7 @@ export default function ProjectsScreen({ children }) {
 
     if (label == "Join") {
       e.preventDefault();
-      fetchURL = "/joinProject/" + children;
+      fetchURL = "/joinProject" + children;
       fetch(fetchURL)
         .then((response) => response.text())
         //.then((data) => console.log(data))
