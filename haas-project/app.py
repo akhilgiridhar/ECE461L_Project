@@ -27,12 +27,14 @@ def login():
         successM = {
             "isAuthenticated": True,
             "name": user["name"],
+            "username": userid,
             "code": 200
         }
     else:
         successM = {
             "isAuthenticated": False,
             "name": None,
+            "username": None,
             "code": 200
         }
     
@@ -46,12 +48,14 @@ def createUser():
     userid = request.args.get("userid")
     password = request.args.get("password")
     
-    user = userColl.find_one({"username" : userid, "password": password})
+    user1 = userColl.find_one({"username" : userid, "password": password})
+    user2 = userColl.find_one({"username" : userid})
     
-    if user is not None:
+    if user1 is not None or user2 is not None:
         successM = {
             "isAuthenticated": False,
             "name": None,
+            "username": None,
             "code": 200
         }
     else:
@@ -63,6 +67,7 @@ def createUser():
         successM = {
             "isAuthenticated": True,
             "name": name,
+            "username": userid,
             "code": 200
         }
         userColl.insert_one(user)
