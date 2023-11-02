@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Paper, Container, Grid, TextField, Button, Modal, Box, Typography } from '@mui/material';
+import { Paper, Container, Grid, Link, TextField, Button, Modal, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -53,7 +53,7 @@ export default function CreateAccount() {
 
         if(data.code === 200) {
           if(data.isAuthenticated) {
-            navigate('/projects');
+            navigate('/projects/' + data.username + "/" + data.name);
           } else {
             setMessage("User exists. Try again")
             setIsModalOpen(true);
@@ -126,6 +126,13 @@ export default function CreateAccount() {
           </Grid>
         </Box>
       </Box>
+      <Grid container>
+            <Grid item>
+              <Link href="./login" variant="body2">
+                {"Already have an account? Login"}
+              </Link>
+            </Grid>
+          </Grid>
       <Modal
         open={isModalOpen}
         onClose={closeModal}

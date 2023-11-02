@@ -51,7 +51,7 @@ const LoginForm = ({ onLogin }) => {
 
         if(data.code === 200) {
           if(data.isAuthenticated) {
-            navigate('/projects');
+            navigate('/projects/' + data.username + "/" + data.name);
           } else {
             setMessage("Invalid credentials. Try again")
             setIsModalOpen(true);

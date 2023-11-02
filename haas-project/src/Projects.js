@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "./App.css";
-import { Paper, Container, Grid, TextField, Button, Modal, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Tooltip, Avatar, Container, Grid, TextField, Button, Modal, Box } from "@mui/material";
 import ProjectsScreen from "./pages/ProjectsScreen";
+import { useParams, useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -17,6 +18,35 @@ const style = {
 
 function Projects() {
 
+  const navigate = useNavigate();
+
+  const {userid, name} = useParams();
+
+  const settings = ['Logout'];
+
+  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const handleOpenNavMenu = (e) => {
+    setAnchorElNav(e.currentTarget);
+  };
+  
+  const handleLogout = (e) => {
+    navigate('/')
+  }
+
+  const handleOpenUserMenu = (e) => {
+    setAnchorElUser(e.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModal = () => {
@@ -28,8 +58,78 @@ function Projects() {
   };
 
   return (
-    <Container maxWidth="md" className="top-left-container">
-      <div style={{ display: 'flex', alignContent: 'center', paddingTop: '10px', textAlign: 'center' }}>
+    <Container maxWidth="xl" className="top-left-container">
+      <AppBar position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontWeight: 700,
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            Welcome {name}!
+          </Typography>
+
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          </Box>
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            LOGO
+          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          </Box>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt={name} src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center" onClick={handleLogout}>{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+    <div style={{ display: 'flex', alignContent: 'center', paddingTop: '10px', textAlign: 'center' }}>
         <Button
           onClick={handleModal}
           variant="contained"
