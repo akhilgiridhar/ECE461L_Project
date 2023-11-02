@@ -45,7 +45,7 @@ export default function CreateAccount() {
 
   const handleCreate = (e) => {
     e.preventDefault();
-    var fetchURL = "/create?name=" + name + "&userid=" + userid + "&password=" + password
+    var fetchURL = "/createUser?name=" + name + "&userid=" + userid + "&password=" + password
     fetch(fetchURL)
       .then((response) => response.text())
       .then(function (data) {

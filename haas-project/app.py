@@ -9,10 +9,48 @@ uri = "mongodb+srv://team2:GhwJULPvVeLVTvme@haas-project.tt8xdg9.mongodb.net/?re
 client = MongoClient(uri, server_api=ServerApi('1'))
 userDb = client['Users']
 userColl = userDb["users"]
+projectsDb = client['Projects']
+projectsColl = projectsDb["projects"]
 
 app = Flask(__name__, static_folder='./buildhw', static_url_path='/')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+@app.route("/createProject")
+@cross_origin()
+def createProject():
+    name = request.args.get("name")
+    description = request.args.get("description")
+    projectId = request.args.get("projectId")
+    userid = request.args.get("userId")
+    
+    project1 = projectsColl.find_one({"projectId" : projectId})
+    project2 = projectsColl.find_one({"name": name})
+    
+    if project1 is not None or project2 is not None:
+        successM = {
+            "isAuthenticated": False,
+            "code": 200
+        }
+    else:
+        users = []
+        users.append(userid)
+        project = {
+            "name": name,
+            "projectId": projectId,
+            "description": description,
+            "users": users,
+            "HW1": 100,
+            "Hw2": 100,
+        }
+        projectsColl.insert_one(project)
+        successM = {
+            "isAuthenticated": True,
+            "code": 200
+        }
+    
+    return jsonify(successM), 200
 
 
 @app.route("/login")
@@ -41,7 +79,7 @@ def login():
     return jsonify(successM), 200
 
 
-@app.route('/create')
+@app.route('/createUser')
 @cross_origin()
 def createUser():
     name = request.args.get("name")
