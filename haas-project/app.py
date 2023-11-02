@@ -14,6 +14,7 @@ app = Flask(__name__, static_folder='./buildhw', static_url_path='/')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+
 @app.route("/login")
 @cross_origin()
 def login():
@@ -37,6 +38,38 @@ def login():
     
     return jsonify(successM), 200
 
+
+@app.route('/create')
+@cross_origin()
+def createUser():
+    name = request.args.get("name")
+    userid = request.args.get("userid")
+    password = request.args.get("password")
+    
+    user = userColl.find_one({"username" : userid, "password": password})
+    
+    if user is not None:
+        successM = {
+            "isAuthenticated": False,
+            "name": None,
+            "code": 200
+        }
+    else:
+        user = {
+            "username": userid,
+            "password": password,
+            "name": name
+        }
+        successM = {
+            "isAuthenticated": True,
+            "name": name,
+            "code": 200
+        }
+        userColl.insert_one(user)
+
+    return jsonify(successM), 200
+
+
 @app.route('/joinProject/<projectid>')
 @cross_origin()
 def joinProject(projectid):
@@ -44,12 +77,14 @@ def joinProject(projectid):
     successM = {"message": message, "code": 200}
     return jsonify(successM), 200
 
+
 @app.route('/leaveProject/<projectid>')
 @cross_origin()
 def leaveProject(projectid):
     message = "Left " + projectid
     successM = {"message": message, "code": 200}
     return jsonify(successM), 200
+
 
 @app.route('/checkin')
 @cross_origin()
@@ -60,6 +95,7 @@ def checkIn_hardware():
     successM = {"message": message, "code": 200}
     return jsonify(successM), 200
 
+
 @app.route('/checkout')
 @cross_origin()
 def checkOut_hardware():
@@ -68,6 +104,7 @@ def checkOut_hardware():
     message = qty + " hardware checked out"
     successM = {"message": message, "code": 200}
     return jsonify(successM), 200
+
 
 @app.route('/')
 @cross_origin()

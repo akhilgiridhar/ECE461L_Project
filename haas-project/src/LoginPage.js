@@ -24,8 +24,8 @@ const style = {
 const LoginForm = ({ onLogin }) => {
   const navigate = useNavigate();
 
-  const [userid, setUserid] = useState("")
-  const [password, setPassword] = useState("")
+  const [userid, setUserid] = useState("");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -46,7 +46,6 @@ const LoginForm = ({ onLogin }) => {
     var fetchURL = "/login?userid=" + userid + "&password=" + password
     fetch(fetchURL)
       .then((response) => response.text())
-      //.then((data) => console.log(data))
       .then(function (data) {
         data = JSON.parse(data);
 
