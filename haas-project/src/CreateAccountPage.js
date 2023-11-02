@@ -6,6 +6,7 @@ import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import PersonIcon from '@mui/icons-material/Person';
 import { deepPurple, indigo } from '@mui/material/colors';
+import { useAuth } from "./auth";
 
 const style = {
   position: "absolute",
@@ -26,6 +27,8 @@ export default function CreateAccount() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const auth = useAuth()
 
   const handleName = (e) => {
     setName(e.target.value);
@@ -53,6 +56,7 @@ export default function CreateAccount() {
 
         if(data.code === 200) {
           if(data.isAuthenticated) {
+            auth.login(data.username)
             navigate('/projects/' + data.username + "/" + data.name);
           } else {
             setMessage("User exists. Try again")

@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import PersonIcon from '@mui/icons-material/Person';
 import Typography from '@mui/material/Typography';
 import { deepPurple, indigo } from '@mui/material/colors';
+import { useAuth } from "./auth";
 
 const style = {
   position: "absolute",
@@ -28,6 +29,8 @@ const LoginForm = ({ onLogin }) => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const auth = useAuth()
 
   const handlePassword = (e) => {
     setPassword(e.target.value);
@@ -51,7 +54,8 @@ const LoginForm = ({ onLogin }) => {
 
         if(data.code === 200) {
           if(data.isAuthenticated) {
-            navigate('/projects/' + data.username + "/" + data.name);
+            auth.login(data.username)
+            navigate('/projects/' + data.username + "/" + data.name, {replace: false});
           } else {
             setMessage("Invalid credentials. Try again")
             setIsModalOpen(true);
