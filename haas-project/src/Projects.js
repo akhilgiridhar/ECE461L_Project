@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Tooltip, Avatar, Container, Grid, TextField, Button, Modal, Box } from "@mui/material";
 import ProjectsScreen from "./pages/ProjectsScreen";
@@ -53,6 +53,7 @@ function Projects() {
   const [projectName, setProjectName] = useState("");
   const [projectId, setProjectId] = useState("");
   const [projectDescription, setProjectDescription] = useState("")
+  const [projects, setProjects] = useState(null);
 
   const handleProjectName = (e) => {
     setProjectName(e.target.value);
@@ -78,6 +79,22 @@ function Projects() {
     setIsModalOpen2(false);
   };
 
+  useEffect(() => {
+    handleGetProjects(); // Fetch projects when the component mounts
+  }, []); 
+
+  const handleGetProjects = () => {
+    var fetchURL = "/getProjects/" + userid;
+    fetch(fetchURL)
+      .then((response) => response.text())
+      .then(function (data) {
+        data = JSON.parse(data)
+        setProjects(data)
+        console.log(data)
+      })
+      .catch((error) => console.error("Error fetching projects:", error));
+  };
+
   const handleCreateProject = (e) => {
     e.preventDefault();
     var fetchURL = "/createProject?name=" + projectName + "&description=" + projectDescription + "&projectId=" + projectId + "&userId=" + userid;
@@ -89,11 +106,22 @@ function Projects() {
 
         if (data.isAuthenticated) {
           closeModal1();
+          handleGetProjects();
         } else {
           setMessage("Project exists");
           setIsModalOpen2(true)
         }
       });
+  }
+
+  const displayProjects = () => {
+    if(!projects) return null;
+
+    return projects.map((project, index) => (
+      <Grid item xs={12} key={index}>
+        <ProjectsScreen userid={userid} projectid={project.projectId} name={project.name} qty1={project.HW1} qty2={project.Hw2} users={project.users} joined={project.joined}></ProjectsScreen>
+      </Grid>
+    ));
   }
 
   return (
@@ -214,15 +242,7 @@ function Projects() {
         </Box>
       </Modal>
       <Grid container spacing={3} style={{ padding: "5px" }}>
-        <Grid item xs={12}>
-          <ProjectsScreen>Project 1</ProjectsScreen>
-        </Grid>
-        <Grid item xs={12}>
-          <ProjectsScreen>Project 2</ProjectsScreen>
-        </Grid>
-        <Grid item xs={12}>
-          <ProjectsScreen>Project 3</ProjectsScreen>
-        </Grid>
+        {displayProjects()}
       </Grid>
     </Container>
   );

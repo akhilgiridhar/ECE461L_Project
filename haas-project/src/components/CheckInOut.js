@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Paper, Container, Grid, TextField, Button } from "@mui/material";
 import Modal from "react-modal";
 
-function CheckInOut() {
+function CheckInOut({ joined, projectid, sendDataToHardware}) {
   const [qty, setQty] = useState("");
   const [message, setMessage] = useState("");
 
@@ -80,6 +80,7 @@ function CheckInOut() {
           onChange={handleQty}
           InputLabelProps={{ shrink: true }}
           style={{ marginBottom: 10 }}
+          disabled={!joined}
         />
         <Button
           onClick={handleCheckin}
@@ -87,6 +88,7 @@ function CheckInOut() {
           color="success"
           size="medium"
           style={{ marginRight: 10 }}
+          disabled={!joined}
         >
           Check In
         </Button>
@@ -96,6 +98,7 @@ function CheckInOut() {
           color="success"
           size="medium"
           style={{ marginRight: 10 }}
+          disabled={!joined}
         >
           Check Out
         </Button>

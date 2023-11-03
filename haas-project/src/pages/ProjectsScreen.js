@@ -18,18 +18,20 @@ const style = {
   p: 4,
 };
 
-export default function ProjectsScreen({ children }) {
-  const [color, setColor] = useState("white");
-  const [label, setLabel] = useState("Join");
+export default function ProjectsScreen({projectid, name, qty1, qty2, joined, users, userid}) {
+  const [join, setJoined] = useState(joined);
+  const [color, setColor] = useState(join ? "lightgray" : "white");
+  const [label, setLabel] = useState(join ? "Leave" : "Join");
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [usersArr, setUsers] = useState(users);
 
   const handleChange = (e) => {
     var fetchURL;
 
     if (label == "Join") {
       e.preventDefault();
-      fetchURL = "/joinProject/" + children;
+      fetchURL = "/joinProject?projectid=" + projectid + "&username=" + userid;
       fetch(fetchURL)
         .then((response) => response.text())
         //.then((data) => console.log(data))
@@ -38,6 +40,7 @@ export default function ProjectsScreen({ children }) {
 
           if (data.code === 200) {
             setMessage(data.message);
+            setUsers(data.users);
           } else {
             setMessage(
               "response code: " +
@@ -47,9 +50,10 @@ export default function ProjectsScreen({ children }) {
             );
           }
         });
+        setJoined(true);
     } else {
       e.preventDefault();
-      fetchURL = "/leaveProject/" + children;
+      fetchURL = "/leaveProject?projectid=" + projectid + "&username=" + userid;
       fetch(fetchURL)
         .then((response) => response.text())
         //.then((data) => console.log(data))
@@ -58,6 +62,7 @@ export default function ProjectsScreen({ children }) {
 
           if (data.code === 200) {
             setMessage(data.message);
+            setUsers(data.users)
           } else {
             setMessage(
               "response code: " +
@@ -67,8 +72,9 @@ export default function ProjectsScreen({ children }) {
             );
           }
         });
+        setJoined(false);
     }
-
+    
     const col = color === "white" ? "lightgray" : "white";
     const lab = label === "Join" ? "Leave" : "Join";
     setColor(col);
@@ -79,6 +85,18 @@ export default function ProjectsScreen({ children }) {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const displayUsers = () => {
+    if (!usersArr) return null;
+  
+    return (
+      <ul>
+        {usersArr.map((user, index) => (
+          <li key={index}>{user}</li>
+        ))}
+      </ul>
+    );
   };
 
   return (
@@ -96,15 +114,15 @@ export default function ProjectsScreen({ children }) {
     >
       <div style={{ marginRight: "100px" }}>
         <text style={{ fontSize: "20px", fontWeight: "bold", padding: "10px" }}>
-          {children}
+          {name}
         </text>
       </div>
       <div style={{ marginRight: "100px" }}>
-        <p>List of Users</p>
+        {displayUsers()}
       </div>
       <div style={{ flexDirection: "column" }}>
-        <Hardware>HW1: 50/100</Hardware>
-        <Hardware>HW2: 0/100</Hardware>
+        <Hardware name={"HW1"} qty={qty1} projectid={projectid} joined={join}></Hardware>
+        <Hardware name={"HW2"} qty={qty2} projectid={projectid} joined={join}></Hardware>
       </div>
       <div style={{ marginLeft: "50px" }}>
         <Button variant="contained" onClick={handleChange}>

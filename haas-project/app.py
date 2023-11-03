@@ -17,6 +17,18 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
+@app.route("/getProjects/<userid>")
+@cross_origin()
+def getProjects(userid):
+    data = list(projectsColl.find())
+    
+    for i in data:
+        i['_id'] = str(i['_id'])
+        i['joined'] = userid in i['users']
+    
+    return jsonify(data)
+
+
 @app.route("/createProject")
 @cross_origin()
 def createProject():
@@ -113,19 +125,41 @@ def createUser():
     return jsonify(successM), 200
 
 
-@app.route('/joinProject/<projectid>')
+@app.route('/joinProject')
 @cross_origin()
-def joinProject(projectid):
+def joinProject():
+    projectid = request.args.get("projectid")
+    username = request.args.get("username")
+    
+    update = { "$push": {"users": username }}
+    
+    projectsColl.update_one({"projectId": projectid}, update)
+    
+    project = projectsColl.find_one({"projectId": projectid})
+    
     message = "Joined " + projectid
-    successM = {"message": message, "code": 200}
+    successM = {"message": message, 
+                "users": project["users"],
+                "code": 200}
     return jsonify(successM), 200
 
 
-@app.route('/leaveProject/<projectid>')
+@app.route('/leaveProject')
 @cross_origin()
-def leaveProject(projectid):
+def leaveProject():
+    projectid = request.args.get("projectid")
+    username = request.args.get("username")
+    
+    update = { "$pull": {"users": username }}
+    
+    projectsColl.update_one({"projectId": projectid}, update)
+    
+    project = projectsColl.find_one({"projectId": projectid})
+    
     message = "Left " + projectid
-    successM = {"message": message, "code": 200}
+    successM = {"message": message, 
+                "users": project["users"],
+                "code": 200}
     return jsonify(successM), 200
 
 
