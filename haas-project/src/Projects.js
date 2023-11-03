@@ -3,6 +3,7 @@ import "./App.css";
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Tooltip, Avatar, Container, Grid, TextField, Button, Modal, Box } from "@mui/material";
 import ProjectsScreen from "./pages/ProjectsScreen";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "./auth";
 
 const style = {
   position: "absolute",
@@ -19,6 +20,7 @@ const style = {
 function Projects() {
 
   const navigate = useNavigate();
+  const auth = useAuth()
 
   const { userid, name } = useParams();
 
@@ -32,6 +34,7 @@ function Projects() {
   };
 
   const handleLogout = (e) => {
+    auth.logout(userid)
     navigate('/')
   }
 
