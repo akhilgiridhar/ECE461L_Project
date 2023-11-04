@@ -167,8 +167,8 @@ def leaveProject():
 @cross_origin()
 def checkIn_hardware():
     projectid = request.args.get('projectid')
-    qty = request.args.get('qty')
-    message = qty + " hardware checked in"
+    qty = int(request.args.get('qty'))
+    message = f"{qty} hardware checked in"
     projectsColl.update_one({"projectId": projectid}, {"$inc": {"HW1": qty}})
     successM = {"message": message, "code": 200}
     return jsonify(successM), 200
@@ -178,8 +178,8 @@ def checkIn_hardware():
 @cross_origin()
 def checkOut_hardware():
     projectid = request.args.get('projectid')
-    qty = request.args.get('qty')
-    message = qty + " hardware checked out"
+    qty = int(request.args.get('qty'))
+    message = f"{qty} hardware checked out"
     projectsColl.update_one({"projectId": projectid}, {"$inc": {"HW1": -qty}})
     successM = {"message": message, "code": 200}
     return jsonify(successM), 200
