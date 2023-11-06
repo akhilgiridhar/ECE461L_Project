@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Paper, Container, Grid, TextField, Button } from "@mui/material";
 import Hardware from "../components/Hardware.js";
 import "./ProjectsScreen.css";
@@ -25,6 +25,11 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [usersArr, setUsers] = useState(users);
+  const [currqty1, setQty1] = useState(qty1);
+  const [currqty2, setQty2] = useState(qty2);
+
+  useEffect(()=>{console.log("changed1")}, [currqty1]);
+  useEffect(()=>{console.log("changed2")}, [currqty2]);
 
   const handleChange = (e) => {
     var fetchURL;
@@ -121,8 +126,10 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
         {displayUsers()}
       </div>
       <div style={{ flexDirection: "column" }}>
-        <Hardware name={"HW1"} qty={qty1} projectid={projectid} joined={join}></Hardware>
-        <Hardware name={"HW2"} qty={qty2} projectid={projectid} joined={join}></Hardware>
+        {console.log("projectScreen")}
+        {console.log(typeof setQty1)}
+        <Hardware name={"HW1"} qty={currqty1} projectid={projectid} joined={join} setQty={setQty1}></Hardware>
+        <Hardware name={"HW2"} qty={currqty2} projectid={projectid} joined={join} setQty={setQty2}></Hardware>
       </div>
       <div style={{ marginLeft: "50px" }}>
         <Button variant="contained" onClick={handleChange}>
