@@ -76,6 +76,7 @@ def login():
     
     if user is not None:
         stored_password = user.get("password")
+        # set N = 5 and D = 1 for standard encrypt/decrypt purposes
         decrypted_password = decrypt(stored_password, 5, 1)
         
         if decrypted_password == password:
@@ -110,6 +111,7 @@ def createUser():
     userid = request.args.get("userid")
     password = request.args.get("password")
 
+    # set N = 5 and D = 1 for standard encrypt/decrypt purposes
     encrypted_password = encrypt(password, 5, 1)
     
     user1 = userColl.find_one({"username" : userid, "password": encrypted_password})
