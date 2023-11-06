@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from cipher import encrypt, decrypt
 
 uri = "mongodb+srv://team2:GhwJULPvVeLVTvme@haas-project.tt8xdg9.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(uri, server_api=ServerApi('1'))
@@ -74,12 +75,23 @@ def login():
     user = userColl.find_one({"username" : userid, "password": password})
     
     if user is not None:
-        successM = {
-            "isAuthenticated": True,
-            "name": user["name"],
-            "username": userid,
-            "code": 200
-        }
+        stored_password = user.get("password")
+        decrypted_password = decrypt(stored_password, 5, 1)
+        
+        if decrypted_password == password:
+            successM = {
+                "isAuthenticated": True,
+                "name": user["name"],
+                "username": userid,
+                "code": 200
+            }
+        else:
+            successM = {
+                "isAuthenticated": False,
+                "name": None,
+                "username": None,
+                "code": 200
+            }
     else:
         successM = {
             "isAuthenticated": False,
@@ -97,8 +109,10 @@ def createUser():
     name = request.args.get("name")
     userid = request.args.get("userid")
     password = request.args.get("password")
+
+    encrypted_password = encrypt(password, 5, 1)
     
-    user1 = userColl.find_one({"username" : userid, "password": password})
+    user1 = userColl.find_one({"username" : userid, "password": encrypted_password})
     user2 = userColl.find_one({"username" : userid})
     
     if user1 is not None or user2 is not None:
@@ -111,7 +125,7 @@ def createUser():
     else:
         user = {
             "username": userid,
-            "password": password,
+            "password": encrypted_password,
             "name": name
         }
         successM = {
