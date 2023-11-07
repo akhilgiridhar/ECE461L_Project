@@ -71,8 +71,12 @@ def createProject():
 def login():
     userid = request.args.get("userid")
     password = request.args.get("password")
+
+    # set N = 5 and D = 1 for standard encrypt/decrypt purposes
+    encrypted_username = encrypt(userid, 5, 1)
+    encrypted_password = encrypt(password, 5, 1)
     
-    user = userColl.find_one({"username" : userid, "password": password})
+    user = userColl.find_one({"username" : encrypted_username, "password": encrypted_password})
     
     if user is not None:
         stored_password = user.get("password")
@@ -112,10 +116,11 @@ def createUser():
     password = request.args.get("password")
 
     # set N = 5 and D = 1 for standard encrypt/decrypt purposes
+    encrypted_username = encrypt(userid, 5, 1)
     encrypted_password = encrypt(password, 5, 1)
     
-    user1 = userColl.find_one({"username" : userid, "password": encrypted_password})
-    user2 = userColl.find_one({"username" : userid})
+    user1 = userColl.find_one({"username" : encrypted_username, "password": encrypted_password})
+    user2 = userColl.find_one({"username" : encrypted_username})
     
     if user1 is not None or user2 is not None:
         successM = {
@@ -126,14 +131,14 @@ def createUser():
         }
     else:
         user = {
-            "username": userid,
-            "password": encrypted_password,
+            "username": encrypted_username, # store encrypted username
+            "password": encrypted_password, # store encrypted password
             "name": name
         }
         successM = {
             "isAuthenticated": True,
             "name": name,
-            "username": userid,
+            "username": userid, # return the original username
             "code": 200
         }
         userColl.insert_one(user)
