@@ -126,8 +126,6 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
         {displayUsers()}
       </div>
       <div style={{ flexDirection: "column" }}>
-        {console.log("projectScreen")}
-        {console.log(typeof setQty1)}
         <Hardware name={"HW1"} qty={currqty1} projectid={projectid} joined={join} setQty={setQty1}></Hardware>
         <Hardware name={"HW2"} qty={currqty2} projectid={projectid} joined={join} setQty={setQty2}></Hardware>
       </div>

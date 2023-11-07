@@ -51,7 +51,7 @@ function CheckInOut({ joined, projectid, sendDataToHardware, setQauntity, amount
 
         if (data.code === 200) {
           setMessage(data.message);
-          setQauntity(amount - qty);
+          setQauntity( -1*qty);
         } else {
           setMessage(
             "response code: " +
