@@ -18,7 +18,7 @@ const style = {
   p: 4,
 };
 
-export default function ProjectsScreen({projectid, name, qty1, qty2, joined, users, userid}) {
+export default function ProjectsScreen({projectid, name, qty1, qty2, joined, users, userid, user, reload}) {
   const [join, setJoined] = useState(joined);
   const [color, setColor] = useState(join ? "lightgray" : "white");
   const [label, setLabel] = useState(join ? "Leave" : "Join");
@@ -34,9 +34,9 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
   const handleChange = (e) => {
     var fetchURL;
 
-    if (label == "Join") {
+    if (label === "Join") {
       e.preventDefault();
-      fetchURL = "/joinProject?projectid=" + projectid + "&username=" + userid;
+      fetchURL = "/joinProject?projectid=" + projectid + "&username=" + userid + "&name=" + user;
       fetch(fetchURL)
         .then((response) => response.text())
         //.then((data) => console.log(data))
@@ -58,7 +58,7 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
         setJoined(true);
     } else {
       e.preventDefault();
-      fetchURL = "/leaveProject?projectid=" + projectid + "&username=" + userid;
+      fetchURL = "/leaveProject?projectid=" + projectid + "&username=" + userid + "&name=" + user;
       fetch(fetchURL)
         .then((response) => response.text())
         //.then((data) => console.log(data))
@@ -67,7 +67,8 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
 
           if (data.code === 200) {
             setMessage(data.message);
-            setUsers(data.users)
+            setUsers(data.users);
+            reload()
           } else {
             setMessage(
               "response code: " +

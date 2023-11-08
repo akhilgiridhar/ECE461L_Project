@@ -1,4 +1,6 @@
 import os
+import re
+from tkinter import N
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
@@ -23,11 +25,20 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def getProjects(userid):
     data = list(projectsColl.find())
     
-    for i in data:
-        i['_id'] = str(i['_id'])
-        i['joined'] = userid in i['users']
+    sentToDb = []
     
-    return jsonify(data)
+    for i in data:
+        if userid in i['users']:
+            i['_id'] = str(i['_id'])
+            i['joined'] = userid in i['users']
+            i['HW1'] = f"{i['HW1'][0]}/{i['HW1'][1]}"
+            i['HW2'] = f"{i['HW2'][0]}/{i['HW2'][1]}"
+            sentToDb.append(i)
+    
+    if len(sentToDb) == 0:
+        sentToDb = None
+    
+    return jsonify(sentToDb)
 
 
 @app.route("/createProject")
@@ -37,11 +48,11 @@ def createProject():
     description = request.args.get("description")
     projectId = request.args.get("projectId")
     userid = request.args.get("userId")
+    userName = request.args.get("userName")
     
     project1 = projectsColl.find_one({"projectId" : projectId})
-    project2 = projectsColl.find_one({"name": name})
     
-    if project1 is not None or project2 is not None:
+    if project1 is not None:
         successM = {
             "isAuthenticated": False,
             "code": 200
@@ -50,14 +61,15 @@ def createProject():
         users = []
         names = []
         users.append(userid)
+        names.append(userName)
         project = {
             "name": name,
             "projectId": projectId,
             "description": description,
             "users": users,
             "names": names,
-            "HW1": 100,
-            "HW2": 100,
+            "HW1": [100, 100],
+            "HW2": [100, 100]
         }
         projectsColl.insert_one(project)
         successM = {
@@ -153,17 +165,30 @@ def createUser():
 def joinProject():
     projectid = request.args.get("projectid")
     username = request.args.get("username")
-    
-    update = { "$push": {"users": username }}
-    
-    projectsColl.update_one({"projectId": projectid}, update)
+    name = request.args.get("name")
     
     project = projectsColl.find_one({"projectId": projectid})
     
-    message = "Joined " + projectid
-    successM = {"message": message, 
-                "users": project["users"],
-                "code": 200}
+    if project is not None:
+        update = { "$push": {"users": username,
+                            "names": name}}
+        
+        projectsColl.update_one({"projectId": projectid}, update)
+        
+        project = projectsColl.find_one({"projectId": projectid})
+        
+        message = "Joined " + projectid
+        successM = {"message": message, 
+                    "users": project["names"],
+                    "joined": True,
+                    "code": 200}
+    else:
+        message = "Project with id " + projectid + " not found"
+        successM = {"message": message, 
+                    "users": None,
+                    "joined": False,
+                    "code": 200}
+
     return jsonify(successM), 200
 
 
@@ -172,8 +197,10 @@ def joinProject():
 def leaveProject():
     projectid = request.args.get("projectid")
     username = request.args.get("username")
+    name = request.args.get("name")
     
-    update = { "$pull": {"users": username }}
+    update = { "$pull": {"users": username,
+                         "names": name }}
     
     projectsColl.update_one({"projectId": projectid}, update)
     
@@ -181,7 +208,7 @@ def leaveProject():
     
     message = "Left " + projectid
     successM = {"message": message, 
-                "users": project["users"],
+                "users": project["names"],
                 "code": 200}
     return jsonify(successM), 200
 
@@ -192,11 +219,23 @@ def checkIn_hardware():
     projectid = request.args.get('projectid')
     qty = int(request.args.get('qty'))
     name = request.args.get("name")
-    message = f"{qty} hardware checked in"
-    projectsColl.update_one({"projectId": projectid}, {"$inc": {name: qty}})
     project = projectsColl.find_one({"projectId": projectid})
+    
+    amount = project.get(name)
+    
+    
+    
+    if amount[0] + qty > amount[1]:
+        qty = amount[1] - amount[0]
+        amount[0] = amount[1]
+    else:
+        amount[0] = amount[0] + qty
+    
+    projectsColl.update_one({"projectId": projectid}, {"$set": {name: amount}})
+    project = projectsColl.find_one({"projectId": projectid})
+    message = f"{qty} hardware checked in"
     successM = {"message": message,
-                "qty": int(project.get(name)),
+                "qty": f"{project.get(name)[0]}/{project.get(name)[1]}",
                 "code": 200}
     return jsonify(successM), 200
 
@@ -210,19 +249,23 @@ def checkOut_hardware():
     
     project = projectsColl.find_one({"projectId": projectid})
     
-    amount = int(project.get(name))
+    fromDb = project.get(name)
     
-    if amount < qty:
-        qty = amount
-        projectsColl.update_one({"projectId": projectid}, {"$set": {name: 0}})
+    amount = list(map(int, fromDb))
+    
+    if amount[0] < qty:
+        qty = amount[0]
+        amount[0] = 0
+        projectsColl.update_one({"projectId": projectid}, {"$set": {name: amount}})
     else:
-        projectsColl.update_one({"projectId": projectid}, {"$set": {name: amount - qty}})
+        amount[0] = amount[0] - qty
+        projectsColl.update_one({"projectId": projectid}, {"$set": {name: amount}})
         
     project = projectsColl.find_one({"projectId": projectid})
     
     message = f"{qty} hardware checked out"
     successM = {"message": message, 
-                "qty": int(project.get(name)),
+                "qty": f"{project.get(name)[0]}/{project.get(name)[1]}",
                 "code": 200}
     return jsonify(successM), 200
 

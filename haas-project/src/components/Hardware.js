@@ -6,7 +6,7 @@ export default function Hardware({ name, qty, projectid, joined, setQty}){
     const [amount, setAmount] = useState(qty);
 
     const updateAmt = (qty) => {
-        setAmount(parseInt(qty));
+        setAmount(qty);
     }
 
     return(
