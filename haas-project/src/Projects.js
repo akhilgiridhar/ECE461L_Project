@@ -122,7 +122,7 @@ function Projects() {
 
     return projects.map((project, index) => (
       <Grid item xs={12} key={index}>
-        <ProjectsScreen userid={userid} projectid={project.projectId} name={project.name} qty1={project.HW1} qty2={project.Hw2} users={project.users} joined={project.joined}></ProjectsScreen>
+        <ProjectsScreen userid={userid} projectid={project.projectId} name={project.name} qty1={project.HW1} qty2={project.HW2} users={project.users} joined={project.joined}></ProjectsScreen>
       </Grid>
     ));
   }

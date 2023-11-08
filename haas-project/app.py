@@ -48,14 +48,16 @@ def createProject():
         }
     else:
         users = []
+        names = []
         users.append(userid)
         project = {
             "name": name,
             "projectId": projectId,
             "description": description,
             "users": users,
+            "names": names,
             "HW1": 100,
-            "Hw2": 100,
+            "HW2": 100,
         }
         projectsColl.insert_one(project)
         successM = {
@@ -189,9 +191,13 @@ def leaveProject():
 def checkIn_hardware():
     projectid = request.args.get('projectid')
     qty = int(request.args.get('qty'))
+    name = request.args.get("name")
     message = f"{qty} hardware checked in"
-    projectsColl.update_one({"projectId": projectid}, {"$inc": {"HW1": qty}})
-    successM = {"message": message, "code": 200}
+    projectsColl.update_one({"projectId": projectid}, {"$inc": {name: qty}})
+    project = projectsColl.find_one({"projectId": projectid})
+    successM = {"message": message,
+                "qty": int(project.get(name)),
+                "code": 200}
     return jsonify(successM), 200
 
 
@@ -200,9 +206,24 @@ def checkIn_hardware():
 def checkOut_hardware():
     projectid = request.args.get('projectid')
     qty = int(request.args.get('qty'))
+    name = request.args.get("name")
+    
+    project = projectsColl.find_one({"projectId": projectid})
+    
+    amount = int(project.get(name))
+    
+    if amount < qty:
+        qty = amount
+        projectsColl.update_one({"projectId": projectid}, {"$set": {name: 0}})
+    else:
+        projectsColl.update_one({"projectId": projectid}, {"$set": {name: amount - qty}})
+        
+    project = projectsColl.find_one({"projectId": projectid})
+    
     message = f"{qty} hardware checked out"
-    projectsColl.update_one({"projectId": projectid}, {"$inc": {"HW1": -qty}})
-    successM = {"message": message, "code": 200}
+    successM = {"message": message, 
+                "qty": int(project.get(name)),
+                "code": 200}
     return jsonify(successM), 200
 
 

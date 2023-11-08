@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Paper, Container, Grid, TextField, Button } from "@mui/material";
 import Modal from "react-modal";
 
-function CheckInOut({ joined, projectid, sendDataToHardware, setQauntity, amount}) {
+function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
   const [qty, setQty] = useState(amount);
   const [message, setMessage] = useState("");
   const [amt, setAmt] = useState("");
@@ -17,7 +17,7 @@ function CheckInOut({ joined, projectid, sendDataToHardware, setQauntity, amount
   const handleCheckin = (e) => {
     e.preventDefault();
     console.log(e)
-    var fetchURL =`/checkin?projectid=${projectid}&qty=${qty}`;
+    var fetchURL =`/checkin?projectid=${projectid}&qty=${qty}&name=${name}`;
     fetch(fetchURL)
       .then((response) => response.text())
       //.then((data) => console.log(data))
@@ -26,7 +26,7 @@ function CheckInOut({ joined, projectid, sendDataToHardware, setQauntity, amount
 
         if (data.code === 200) {
           setMessage(data.message);
-          setQauntity(qty);
+          setQauntity(data.qty);
         } else {
           setMessage(
             "response code: " +
@@ -42,7 +42,7 @@ function CheckInOut({ joined, projectid, sendDataToHardware, setQauntity, amount
 
   const handleCheckout = (e) => {
     e.preventDefault();
-    var fetchURL = `/checkin?projectid=${projectid}&qty=${qty}`;
+    var fetchURL = `/checkout?projectid=${projectid}&qty=${qty}&name=${name}`;
     fetch(fetchURL)
       .then((response) => response.text())
       //.then((data) => console.log(data))
@@ -51,7 +51,7 @@ function CheckInOut({ joined, projectid, sendDataToHardware, setQauntity, amount
 
         if (data.code === 200) {
           setMessage(data.message);
-          setQauntity( -1*qty);
+          setQauntity(data.qty);
         } else {
           setMessage(
             "response code: " +
