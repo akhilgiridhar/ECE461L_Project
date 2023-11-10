@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import "./App.css";
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Tooltip, Avatar, Container, Grid, TextField, Button, Modal, Box } from "@mui/material";
 import ProjectsScreen from "./pages/ProjectsScreen";
@@ -59,6 +59,8 @@ function Projects() {
   const [projectId2, setProjectId2] = useState("");
   const [projectDescription, setProjectDescription] = useState("")
   const [projects, setProjects] = useState(null);
+  const [HW1, setHW1] = useState("");
+  const [HW2, setHW2] = useState("");
 
   const handleProjectName = (e) => {
     setProjectName(e.target.value);
@@ -98,7 +100,7 @@ function Projects() {
 
   useEffect(() => {
     handleGetProjects(); // Fetch projects when the component mounts
-  }, []);
+  }, [HW1, HW2]);
 
   const handleGetProjects = () => {
     var fetchURL = "/getProjects/" + userid;
@@ -106,8 +108,12 @@ function Projects() {
       .then((response) => response.text())
       .then(function (data) {
         data = JSON.parse(data)
-        setProjects(data)
-        console.log(data)
+        if(data.code === 200) {
+          setProjects(data.projects);
+          setHW1(data.HW1);
+          setHW2(data.HW2);
+          console.log(data);
+        }
       })
       .catch((error) => console.error("Error fetching projects:", error));
   };
@@ -164,7 +170,7 @@ function Projects() {
 
     return projects.map((project, index) => (
       <Grid item xs={12} key={index}>
-        <ProjectsScreen userid={userid} projectid={project.projectId} name={project.name} qty1={project.HW1} qty2={project.HW2} users={project.names} joined={project.joined} user={name} reload={handleGetProjects}></ProjectsScreen>
+        <ProjectsScreen userid={userid} projectid={project.projectId} name={project.name} qty1={HW1} qty2={HW2} users={project.names} joined={project.joined} user={name} reload={handleGetProjects}></ProjectsScreen>
       </Grid>
     ));
   }

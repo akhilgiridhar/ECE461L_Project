@@ -1,12 +1,21 @@
-import React from "react";
-import { useState } from "react";
-import { Paper, Container, Grid, TextField, Button } from "@mui/material";
-import Modal from "react-modal";
+import React, { useContext, useState } from "react";
+import { Box, Grid, TextField, Button, Modal} from "@mui/material";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
   const [qty, setQty] = useState(amount);
   const [message, setMessage] = useState("");
-  const [amt, setAmt] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -26,7 +35,10 @@ function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
 
         if (data.code === 200) {
           setMessage(data.message);
-          setQauntity(data.qty);
+          if(data.checkedin){
+            console.log("reached reload")
+            setQauntity();
+          }
         } else {
           setMessage(
             "response code: " +
@@ -51,7 +63,10 @@ function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
 
         if (data.code === 200) {
           setMessage(data.message);
-          setQauntity(data.qty);
+          if(data.checkedout){
+            console.log("reached reload")
+            setQauntity();
+          }
         } else {
           setMessage(
             "response code: " +
@@ -85,6 +100,7 @@ function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
           InputLabelProps={{ shrink: true }}
           style={{ marginBottom: 10 }}
           disabled={!joined}
+          inputProps={{min:'0', step:'any'}}
         />
         <Button
           onClick={handleCheckin}
@@ -108,12 +124,15 @@ function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
         </Button>
       </div>
       <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        contentLabel="Form Submission Result"
+        open={isModalOpen}
+        onClose={closeModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <h2>{message}</h2>
-        <button onClick={closeModal}>Close</button>
+        <Box sx={style}>
+          <h2>{message}</h2>
+          <Button onClick={closeModal}>Close</Button>
+        </Box>
       </Modal>
     </Grid>
   );

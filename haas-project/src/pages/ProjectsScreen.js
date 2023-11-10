@@ -18,7 +18,7 @@ const style = {
   p: 4,
 };
 
-export default function ProjectsScreen({projectid, name, qty1, qty2, joined, users, userid, user, reload}) {
+export default function ProjectsScreen({ projectid, name, qty1, qty2, joined, users, userid, user, reload }) {
   const [join, setJoined] = useState(joined);
   const [color, setColor] = useState(join ? "lightgray" : "white");
   const [label, setLabel] = useState(join ? "Leave" : "Join");
@@ -28,8 +28,8 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
   const [currqty1, setQty1] = useState(qty1);
   const [currqty2, setQty2] = useState(qty2);
 
-  useEffect(()=>{console.log("changed1")}, [currqty1]);
-  useEffect(()=>{console.log("changed2")}, [currqty2]);
+  useEffect(() => { console.log("changed1") }, [currqty1]);
+  useEffect(() => { console.log("changed2") }, [currqty2]);
 
   const handleChange = (e) => {
     var fetchURL;
@@ -49,13 +49,13 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
           } else {
             setMessage(
               "response code: " +
-                data.code +
-                " and message recieved: " +
-                data.error
+              data.code +
+              " and message recieved: " +
+              data.error
             );
           }
         });
-        setJoined(true);
+      setJoined(true);
     } else {
       e.preventDefault();
       fetchURL = "/leaveProject?projectid=" + projectid + "&username=" + userid + "&name=" + user;
@@ -68,19 +68,20 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
           if (data.code === 200) {
             setMessage(data.message);
             setUsers(data.users);
-            reload()
+
+            setTimeout(reload(), 2000);
           } else {
             setMessage(
               "response code: " +
-                data.code +
-                " and message recieved: " +
-                data.error
+              data.code +
+              " and message recieved: " +
+              data.error
             );
           }
         });
-        setJoined(false);
+      setJoined(false);
     }
-    
+
     const col = color === "white" ? "lightgray" : "white";
     const lab = label === "Join" ? "Leave" : "Join";
     setColor(col);
@@ -95,7 +96,7 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
 
   const displayUsers = () => {
     if (!usersArr) return null;
-  
+
     return (
       <ul>
         {usersArr.map((user, index) => (
@@ -104,6 +105,10 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
       </ul>
     );
   };
+
+  useEffect(() => {
+    console.log("value changed");
+  }, [qty1, qty2]);
 
   return (
     <Paper
@@ -127,8 +132,8 @@ export default function ProjectsScreen({projectid, name, qty1, qty2, joined, use
         {displayUsers()}
       </div>
       <div style={{ flexDirection: "column" }}>
-        <Hardware name={"HW1"} qty={currqty1} projectid={projectid} joined={join} setQty={setQty1}></Hardware>
-        <Hardware name={"HW2"} qty={currqty2} projectid={projectid} joined={join} setQty={setQty2}></Hardware>
+        <Hardware name={"HW1"} qty={currqty1} projectid={projectid} joined={join} setQty={setQty1} reload={reload}></Hardware>
+        <Hardware name={"HW2"} qty={currqty2} projectid={projectid} joined={join} setQty={setQty2} reload={reload}></Hardware>
       </div>
       <div style={{ marginLeft: "50px" }}>
         <Button variant="contained" onClick={handleChange}>
