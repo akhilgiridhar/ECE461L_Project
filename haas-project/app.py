@@ -190,7 +190,7 @@ def joinProject():
                     "users": project["names"],
                     "joined": True,
                     "code": 200}
-    elif username in project.get("users"):
+    elif project is not None and username in project.get("users"):
         message = "Already joined project"
         successM = {"message": message,
                     "users": None,
