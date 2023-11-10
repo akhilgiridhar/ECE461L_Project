@@ -112,7 +112,6 @@ function Projects() {
           setProjects(data.projects);
           setHW1(data.HW1);
           setHW2(data.HW2);
-          console.log(data);
         }
       })
       .catch((error) => console.error("Error fetching projects:", error));

@@ -289,7 +289,8 @@ def checkOut_hardware():
 
     if qty > 0:
         if amount[0] < qty:
-            checkedOut[idx] = amount[0]
+            qty = amount[0]
+            checkedOut[idx] = checkedOut[idx] + amount[0]
             amount[0] = 0
             projectsColl.update_one({"projectId": projectid}, {
                                     "$set": {"checkedOut": checkedOut}})

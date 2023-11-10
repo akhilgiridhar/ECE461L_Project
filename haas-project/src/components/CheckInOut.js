@@ -13,8 +13,8 @@ const style = {
   p: 4,
 };
 
-function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
-  const [qty, setQty] = useState(amount);
+function CheckInOut({ name, joined, projectid, reload}) {
+  const [qty, setQty] = useState(0);
   const [message, setMessage] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +37,7 @@ function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
           setMessage(data.message);
           if(data.checkedin){
             console.log("reached reload")
-            setQauntity();
+            reload();
           }
         } else {
           setMessage(
@@ -65,7 +65,7 @@ function CheckInOut({ name, joined, projectid, setQauntity, amount}) {
           setMessage(data.message);
           if(data.checkedout){
             console.log("reached reload")
-            setQauntity();
+            reload();
           }
         } else {
           setMessage(

@@ -107,7 +107,8 @@ export default function ProjectsScreen({ projectid, name, qty1, qty2, joined, us
   };
 
   useEffect(() => {
-    console.log("value changed");
+    setQty1(qty1);
+    setQty2(qty2);
   }, [qty1, qty2]);
 
   return (
@@ -132,8 +133,8 @@ export default function ProjectsScreen({ projectid, name, qty1, qty2, joined, us
         {displayUsers()}
       </div>
       <div style={{ flexDirection: "column" }}>
-        <Hardware name={"HW1"} qty={currqty1} projectid={projectid} joined={join} setQty={setQty1} reload={reload}></Hardware>
-        <Hardware name={"HW2"} qty={currqty2} projectid={projectid} joined={join} setQty={setQty2} reload={reload}></Hardware>
+        <Hardware name={"HW1"} qty={qty1} projectid={projectid} joined={join} reload={reload}></Hardware>
+        <Hardware name={"HW2"} qty={qty2} projectid={projectid} joined={join} reload={reload}></Hardware>
       </div>
       <div style={{ marginLeft: "50px" }}>
         <Button variant="contained" onClick={handleChange}>
