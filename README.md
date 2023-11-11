@@ -8,6 +8,8 @@ Our team has implemented a Proof of Concept (PoC) for a web application for a fu
 ### Instructions: 
 To run this project please run the following commands:
 - pip3 install pymongo
+- pip3 install flask
+- pip3 install flask-cors
 - npm install
 - python3 app.py
 - npm start
